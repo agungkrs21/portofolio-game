@@ -1,7 +1,7 @@
 import { k } from '../kplayLoader.js';
 
 export function drawBorder(w, h, tilesize = 16) {
-  const border = k.add([k.pos(0, 0), k.fixed()]);
+  const border = k.add([k.pos(0, 0), k.fixed(), k.z(10)]);
 
   // corners
   border.add([
