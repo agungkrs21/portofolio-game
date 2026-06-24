@@ -12,13 +12,15 @@ export const k = kaplay({
   global: false,
 });
 
-k.loadSprite('char_robot', '../asset/mainChar/Char_Robot.png', {
+k.loadSprite('char-robot', '../asset/mainChar/Char_Robot.png', {
   sliceX: 8,
   sliceY: 6,
   anims: {
     idle: { from: 16, to: 18, speed: 7, loop: true },
     shoot: { from: 32, to: 37, loop: true },
-    jump: { from: 24, to: 29, loop: true },
+    jump: { from: 24, to: 26, speed: 12 },
+    land: { frames: [28, 29, 25, 24], speed: 24 },
+    fall: { frames: [26, 28] },
     walk: { from: 8, to: 15, loop: true },
     walkShoot: { from: 0, to: 7, loop: true },
     heal: { from: 19, to: 24, loop: true },
