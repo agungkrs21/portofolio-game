@@ -30,3 +30,16 @@ export function setMapColliders(k, map, colliders) {
     ]);
   }
 }
+
+export function setCameraControls(k, map, player) {
+  k.onUpdate(() => {
+    const target = player.worldPos();
+    const targetX = k.clamp(target.x, map.pos.x + 50, map.width - 50);
+    const targetY = k.clamp(target.y, map.pos.y + 100, map.height - 100);
+
+    k.setCamPos(
+      k.lerp(k.getCamPos().x, targetX, 0.1),
+      k.lerp(k.getCamPos().y, targetY, 0.1),
+    );
+  });
+}

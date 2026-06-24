@@ -6,7 +6,7 @@ import {
 } from '../entities/Objects.js';
 import { makePlayer } from '../entities/player.js';
 import { drawBorder } from '../ui/drawBorder.js';
-import { setMapColliders } from './sceneUtils.js';
+import { setCameraControls, setMapColliders } from './sceneUtils.js';
 
 export function intro(k, sceneData) {
   // drawBorder(k.width(), k.height());
@@ -26,6 +26,7 @@ export function intro(k, sceneData) {
   const positions = sceneLayers.positions.objects;
 
   setMapColliders(k, map, colliders);
+  setCameraControls(k, map, player);
 
   for (const position of positions) {
     if (position.name === 'player') {
@@ -56,6 +57,5 @@ export function intro(k, sceneData) {
       continue;
     }
   }
-
   k.debug.log(map.pos, map.width, map.height);
 }
