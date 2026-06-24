@@ -1,46 +1,52 @@
+import {
+  makeBox,
+  makeCheckPoint,
+  makeDoor,
+  makeKey,
+} from '../entities/Objects.js';
 import { drawBorder } from '../ui/drawBorder.js';
+import { setMapColliders } from './sceneUtils.js';
 
-export function intro(k) {
-  const map = k.add([
-    k.pos(k.width() / 2, k.height() - 10),
-    k.sprite('intro'),
-    k.z(1),
-    k.anchor('bot'),
-  ]);
+export function intro(k, sceneData) {
   // drawBorder(k.width(), k.height());
 
-  const player = k.make([
-    k.pos(0, -72),
-    k.sprite('char_robot', { anim: 'idle' }),
-    k.anchor('center'),
-  ]);
+  k.setGravity(1000);
+  k.setCamPos(192, 160 + 60);
+  k.debug.inspect = true;
 
-  map.add(player);
+  const map = k.add([k.pos(0, 0), k.sprite('intro'), k.z(1)]);
 
-  player.onKeyDown('right', () => {
-    player.move(80, 0);
-    if (player.curAnim() !== 'walk') {
-      player.play('walk');
+  const sceneLayers = Object.fromEntries(
+    sceneData.layers.map((l) => [l.name, l]),
+  );
+
+  const colliders = sceneLayers.colliders.objects;
+  const positions = sceneLayers.positions.objects;
+
+  setMapColliders(k, map, colliders);
+
+  for (const position of positions) {
+    if (position.name === 'door') {
+      const door = makeDoor(k, k.vec2(position.x, position.y));
+      map.add(door);
+      continue;
     }
-    player.flipX = false;
-  });
-  player.onKeyDown('left', () => {
-    player.move(-80, 0);
-    if (player.curAnim() !== 'walk') {
-      player.play('walk');
+    if (position.name === 'box') {
+      const box = makeBox(k, k.vec2(position.x, position.y));
+      map.add(box);
+      continue;
     }
-    player.flipX = true;
-  });
-
-  player.onKeyDown('right', () => {
-    player.move(80, 0);
-    if (player.curAnim() !== 'walk') {
-      player.play('walk');
+    if (position.name === 'roomKey') {
+      const key = makeKey(k, k.vec2(position.x, position.y));
+      map.add(key);
+      continue;
     }
-    player.flipX = false;
-  });
+    if (position.name === 'checkPoint') {
+      const checkPoint = makeCheckPoint(k, k.vec2(position.x, position.y));
+      map.add(checkPoint);
+      continue;
+    }
+  }
 
-  k.onUpdate(() => {
-    k.camPos(player.worldPos());
-  });
+  k.debug.log(map.pos, map.width, map.height);
 }

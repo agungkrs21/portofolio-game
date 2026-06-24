@@ -26,7 +26,57 @@ k.loadSprite('char_robot', '../asset/mainChar/Char_Robot.png', {
   },
 });
 k.loadSprite('intro', '../maps/intro.png');
-k.loadSprite('border', '../asset/border/corder-edge.png', {
+k.loadSprite('border', '../asset/border/corner-edge.png', {
   sliceX: 2,
   sliceY: 1,
+});
+k.loadSprite('door', '../asset/objects/Door.png', {
+  sliceX: 4,
+  sliceY: 1,
+  anims: {
+    close: { from: 3, to: 0 },
+    open: { from: 0, to: 3 },
+  },
+});
+k.loadSprite('boxes', '../asset/objects/Boxes.png', {
+  sliceX: 4,
+  sliceY: 4,
+  anims: {
+    boxOpen: {
+      frames: [0, 4, 8, 12],
+    },
+    boxClose: {
+      frames: [12, 8, 4, 0],
+    },
+    chestOpen: {
+      frames: [1, 5, 9, 13],
+    },
+    chestClose: {
+      frames: [13, 9, 5, 1],
+    },
+    boxExplode: {
+      frames: [2, 6, 10, 14],
+    },
+    chestExplode: {
+      frames: [3, 7, 11, 15],
+    },
+  },
+});
+
+k.loadSprite('items', '../asset/objects/Items.png', {
+  sliceX: 8,
+  sliceY: 6,
+  anims: {
+    key: {
+      frames: [7, 15, 23, 31, 39, 47],
+    },
+  },
+});
+
+k.loadSprite('checkPoint', '../asset/objects/checkpoint.png', {
+  sliceX: 9,
+  sliceY: 1,
+  anims: {
+    active: { from: 0, to: 8 },
+  },
 });
