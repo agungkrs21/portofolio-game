@@ -5,13 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Portofolio Game</title>
     <link rel="stylesheet" href="./css/syle.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <div class="game-container">
-      <div class="game-border">
+    <div class="game-wrapper">
+      <div class="game-container">
+        <div class="text-container">
+          <div class="char-image">
+            <img src="./asset/charFace/m1.png" alt="player" />
+          </div>
+          <p class="text-box pixel-font">
+            hello my name is agung kurniawan and welcome to my website.
+          </p>
+        </div>
         <canvas id="game"></canvas>
       </div>
     </div>
+
+    <div class="isi-content"></div>
 
     <script type="module" src="./src/main.js"></script>
   </body>

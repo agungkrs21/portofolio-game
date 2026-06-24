@@ -3,6 +3,8 @@ import kaplay from '../lib/kaplay.mjs';
 const scale = 4;
 
 export const k = kaplay({
+  // width: 1280,
+  // heigth: 720,
   letterBox: true,
   background: '#000000',
   scale,
