@@ -12,7 +12,10 @@ export function makePlayer(k) {
     k.z(2),
     'player',
     {
-      speed: 80,
+      speed: 120,
+      accel: 400,
+      friction: 800,
+      inputX: 0,
       isAttacking: false,
       jumheld: false,
       setPosition(x, y) {
@@ -26,18 +29,19 @@ export function makePlayer(k) {
           k.onKeyPress((key) => {
             if (key === 'x') {
               if (this.curAnim() !== 'jump') this.play('jump');
-              this.jump();
+              this.vel = k.vec2(this.vel.x, -350);
               this.jumheld = true;
             }
           }),
           k.onKeyDown((key) => {
-            if (this.jumheld && key === 'x') {
-              this.addForce(k.vec2(0, -90000));
+            if (this.jumheld && key === 'x' && this.vel.y < 0) {
+              this.vel.y -= 14;
             }
           }),
           k.onKeyRelease((key) => {
             if (key === 'x') {
               this.jumheld = false;
+              this.vel.y *= 0.5;
             }
           }),
         );
@@ -46,24 +50,21 @@ export function makePlayer(k) {
         this.controlHandlers.push(
           k.onKeyDown((key) => {
             if (key === 'left' || key === 'right') {
-              if (
-                this.curAnim() !== 'walk' &&
-                this.isGrounded() &&
-                this.curAnim() !== 'land'
-              ) {
-                this.play('walk');
-              }
-              const moveBack =
+              const direction =
                 key === 'left'
-                  ? { flipX: true, direction: -this.speed }
-                  : { flipX: false, direction: this.speed };
-              this.flipX = moveBack.flipX;
-              this.move(moveBack.direction, 0);
+                  ? { dir: -1, flip: true }
+                  : { dir: 1, flip: false };
+              this.inputX = direction.dir;
+              this.flipX = direction.flip;
             }
           }),
         );
         this.controlHandlers.push(
-          k.onKeyRelease(() => {
+          k.onKeyRelease((key) => {
+            if (key === 'left' || key === 'right') {
+              this.inputX = 0;
+              this.animSpeed = 1;
+            }
             if (
               this.curAnim() !== 'idle' &&
               this.curAnim() !== 'jump' &&
@@ -85,9 +86,9 @@ export function makePlayer(k) {
           this.play('land');
         });
 
-        this.onFallOff(() => {
-          this.play('fall');
-        });
+        // this.onFallOff(() => {
+        //   this.play('fall');
+        // });
 
         this.onHeadbutt(() => {
           this.play('fall');
@@ -100,9 +101,43 @@ export function makePlayer(k) {
         });
 
         this.onUpdate(() => {
+          // limit y velocity to avoid falling trough collision
           if (this.vel.y > 400) {
             this.vel.y = 400;
           }
+          if (!this.isGrounded() && Math.abs(this.vel.y) < 40) {
+            this.vel.y *= 0.9;
+          }
+
+          if (this.inputX !== 0) {
+            this.vel.x += this.inputX * this.accel * k.dt();
+
+            if (Math.abs(this.vel.x) > 5) {
+              if (
+                this.curAnim() !== 'walk' &&
+                this.curAnim() !== 'jump' &&
+                this.curAnim() !== 'land' &&
+                this.isGrounded()
+              ) {
+                this.play('walk');
+              }
+
+              const ratio = Math.abs(this.vel.x) / this.speed;
+              this.animSpeed = 0.7 + Math.pow(ratio, 3) * 1.3;
+            }
+          } else if (this.isGrounded()) {
+            if (this.vel.x > 0) {
+              this.vel.x -= this.friction * k.dt();
+              this.vel.x = Math.max(0, this.vel.x);
+            }
+
+            if (this.vel.x < 0) {
+              this.vel.x += this.friction * k.dt();
+              this.vel.x = Math.min(0, this.vel.x);
+            }
+          }
+
+          this.vel.x = k.clamp(this.vel.x, -this.speed, this.speed);
         });
       },
     },

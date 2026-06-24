@@ -18,10 +18,10 @@ k.loadSprite('char-robot', '../asset/mainChar/Char_Robot.png', {
   anims: {
     idle: { from: 16, to: 18, speed: 7, loop: true },
     shoot: { from: 32, to: 37, loop: true },
-    jump: { from: 24, to: 26, speed: 12 },
-    land: { frames: [28, 29, 25, 24], speed: 24 },
+    jump: { from: 24, to: 27, speed: 12 },
+    land: { frames: [28, 29, 25, 24], speed: 20 },
     fall: { frames: [26, 28] },
-    walk: { from: 8, to: 15, loop: true },
+    walk: { from: 8, to: 15, speed: 24, loop: true },
     walkShoot: { from: 0, to: 7, loop: true },
     heal: { from: 19, to: 24, loop: true },
     death: { from: 40, to: 45, loop: true },

@@ -13,7 +13,7 @@ export function intro(k, sceneData) {
 
   k.setGravity(1000);
   k.setCamPos(192, 160 + 60);
-  k.debug.inspect = true;
+  // k.debug.inspect = true;
 
   const map = k.add([k.pos(0, 0), k.sprite('intro'), k.z(1)]);
   const player = makePlayer(k);

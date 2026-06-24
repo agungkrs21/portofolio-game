@@ -57,6 +57,7 @@ img {
 .text-container {
   position: absolute;
   display: flex;
+  visibility: hidden;
   justify-content: start;
   align-items: center;
   left: 36px;
