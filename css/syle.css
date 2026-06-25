@@ -70,6 +70,59 @@ img {
   background: black;
   overflow-y: auto;
   padding: 1rem;
+  opacity: 1;
+}
+
+.mobile-game-control {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  left: 10px;
+  right: 10px;
+  bottom: 56px;
+  height: 250px;
+  color: white;
+  z-index: 10;
+}
+
+.movement-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 180px;
+  justify-content: center;
+  align-items: center;
+}
+
+.movement-container .up,
+.movement-container .down,
+.movement-container .line {
+  grid-column: span 3;
+  justify-self: center;
+}
+.movement-container .line {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.key {
+  width: 60px;
+  height: 60px;
+  touch-action: none;
+  image-rendering: pixelated;
+}
+
+.action-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.action-container .k-button-img {
+  width: 80px;
+  height: 80px;
+  padding: 0.5rem;
+  image-rendering: pixelated;
 }
 
 .char-wrapper {

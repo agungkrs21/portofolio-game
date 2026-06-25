@@ -1,4 +1,5 @@
 import { state } from '../state/globalStateManager.js';
+import { inputState } from '../state/mobileControlStateManager.js';
 
 export function makePlayer(k) {
   return k.make([
@@ -82,6 +83,60 @@ export function makePlayer(k) {
             }
           }),
         );
+      },
+      setMobileControsl() {
+        // to be honest thers has to be a better way to do this
+        let releaseTimer = 0;
+        let actionTimer = 0;
+
+        this.onUpdate(() => {
+          if (inputState.get('hasMove')) {
+            releaseTimer = 0;
+
+            if (inputState.get('left')) {
+              this.inputX = 1;
+              this.flipX = false;
+            }
+            if (inputState.get('right')) {
+              this.inputX = -1;
+              this.flipX = true;
+            }
+            if (inputState.get('down')) {
+              this.dropping = true;
+            }
+
+            releaseTimer += k.dt();
+          } else if (releaseTimer > 0) {
+            releaseTimer = 0;
+            this.inputX = 0;
+            this.animSpeed = 1;
+            this.dropping = false;
+
+            if (
+              this.curAnim() !== 'idle' &&
+              this.curAnim() !== 'jump' &&
+              this.curAnim() !== 'fall' &&
+              this.curAnim() !== 'attack'
+            ) {
+              this.play('idle');
+            }
+          }
+        });
+
+        k.onUpdate(() => {
+          if (inputState.get('hasAction')) {
+            if (inputState.get('jump') && this.isGrounded()) {
+              this.vel = k.vec2(this.vel.x, -250);
+              this.vel.y -= 70;
+            }
+
+            actionTimer += k.dt();
+            if (actionTimer >= 0.12) {
+              actionTimer = 0;
+              inputState.set('hasAction', false);
+            }
+          }
+        });
       },
 
       setEvents() {

@@ -28,6 +28,7 @@ export function room1(k, roomData) {
       player.setControls();
       player.setEvents();
       player.enablePassTrouhg();
+      player.setMobileControsl();
       continue;
     }
   }
