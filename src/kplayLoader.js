@@ -27,6 +27,23 @@ k.loadSprite('char-robot', '../asset/mainChar/Char_Robot.png', {
     death: { from: 40, to: 45, loop: true },
   },
 });
+
+k.loadSprite('char-male', '../asset/mainChar/Char_Boy.png', {
+  sliceX: 8,
+  sliceY: 6,
+  anims: {
+    idle: { from: 16, to: 18, speed: 7, loop: true },
+    shoot: { from: 32, to: 37, loop: true },
+    jump: { from: 24, to: 27, speed: 12 },
+    land: { frames: [28, 29, 25, 24], speed: 20 },
+    fall: { frames: [26, 28] },
+    walk: { from: 8, to: 15, speed: 24, loop: true },
+    walkShoot: { from: 0, to: 7, loop: true },
+    heal: { from: 19, to: 24, loop: true },
+    death: { from: 40, to: 45, loop: true },
+  },
+});
+
 k.loadSprite('intro', '../maps/intro.png');
 k.loadSprite('border', '../asset/border/corner-edge.png', {
   sliceX: 2,
@@ -71,6 +88,8 @@ k.loadSprite('items', '../asset/objects/Items.png', {
   anims: {
     key: {
       frames: [7, 15, 23, 31, 39, 47],
+      loop: true,
+      speed: 6,
     },
   },
 });

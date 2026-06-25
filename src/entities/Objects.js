@@ -1,7 +1,7 @@
 export function makeDoor(k, intialPos) {
   return k.make([
     k.pos(intialPos),
-    k.sprite('door', { anim: 'open' }),
+    k.sprite('door'),
     k.area({
       shape: new k.Rect(k.vec2(10, 0), 28, 38),
       collisionIgnore: ['collider'],
@@ -13,7 +13,7 @@ export function makeDoor(k, intialPos) {
 export function makeBox(k, intialPos) {
   return k.make([
     k.pos(intialPos),
-    k.sprite('boxes', { anim: 'chestOpen' }),
+    k.sprite('boxes'),
     k.area({
       shape: new k.Rect(k.vec2(8, 2), 16, 16),
       collisionIgnore: ['collider'],
@@ -37,7 +37,7 @@ export function makeKey(k, intialPos) {
 export function makeCheckPoint(k, intialPos) {
   return k.make([
     k.pos(intialPos),
-    k.sprite('checkPoint', { anim: 'active' }),
+    k.sprite('checkPoint'),
     k.area({
       shape: new k.Rect(k.vec2(0, 0), 16, 32),
       collisionIgnore: ['collider'],

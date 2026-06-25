@@ -27,19 +27,19 @@ export function makePlayer(k) {
         //special
         this.controlHandlers.push(
           k.onKeyPress((key) => {
-            if (key === 'x') {
+            if (key === 'z') {
               if (this.curAnim() !== 'jump') this.play('jump');
-              this.vel = k.vec2(this.vel.x, -350);
+              this.vel = k.vec2(this.vel.x, -300);
               this.jumheld = true;
             }
           }),
           k.onKeyDown((key) => {
-            if (this.jumheld && key === 'x' && this.vel.y < 0) {
+            if (this.jumheld && key === 'z' && this.vel.y < 0) {
               this.vel.y -= 14;
             }
           }),
           k.onKeyRelease((key) => {
-            if (key === 'x') {
+            if (key === 'z') {
               this.jumheld = false;
               this.vel.y *= 0.5;
             }

@@ -13,7 +13,7 @@ export function intro(k, sceneData) {
 
   k.setGravity(1000);
   k.setCamPos(192, 160 + 60);
-  // k.debug.inspect = true;
+  k.debug.inspect = true;
 
   const map = k.add([k.pos(0, 0), k.sprite('intro'), k.z(1)]);
   const player = makePlayer(k);
@@ -54,6 +54,20 @@ export function intro(k, sceneData) {
     if (position.name === 'checkPoint') {
       const checkPoint = makeCheckPoint(k, k.vec2(position.x, position.y));
       map.add(checkPoint);
+      continue;
+    }
+    if (position.name === 'portal') {
+      const portal = k.make([
+        k.pos(position.x, position.y),
+        k.area({
+          shape: new k.Rect(k.vec2(0), 16, 32),
+          collisionIgnore: ['collider'],
+        }),
+        'portal',
+      ]);
+
+      map.add(portal);
+
       continue;
     }
   }
