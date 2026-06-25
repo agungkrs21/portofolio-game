@@ -45,6 +45,7 @@ k.loadSprite('char-male', '../asset/mainChar/Char_Boy.png', {
 });
 
 k.loadSprite('intro', '../maps/intro.png');
+k.loadSprite('room1', '../maps/room1.png')
 k.loadSprite('border', '../asset/border/corner-edge.png', {
   sliceX: 2,
   sliceY: 1,

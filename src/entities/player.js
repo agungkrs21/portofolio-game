@@ -14,10 +14,11 @@ export function makePlayer(k) {
     {
       speed: 120,
       accel: 400,
-      friction: 800,
+      friction: 900,
       inputX: 0,
       isAttacking: false,
       jumheld: false,
+      dropping: false,
       setPosition(x, y) {
         ((this.pos.x = x), (this.pos.y = y));
       },
@@ -57,6 +58,9 @@ export function makePlayer(k) {
               this.inputX = direction.dir;
               this.flipX = direction.flip;
             }
+            if (key === 'down') {
+              this.dropping = true;
+            }
           }),
         );
         this.controlHandlers.push(
@@ -64,6 +68,9 @@ export function makePlayer(k) {
             if (key === 'left' || key === 'right') {
               this.inputX = 0;
               this.animSpeed = 1;
+            }
+            if (key === 'down') {
+              this.dropping = false;
             }
             if (
               this.curAnim() !== 'idle' &&
@@ -138,6 +145,20 @@ export function makePlayer(k) {
           }
 
           this.vel.x = k.clamp(this.vel.x, -this.speed, this.speed);
+        });
+      },
+      enablePassTrouhg() {
+        this.onBeforePhysicsResolve((collision) => {
+          const plat = collision.target;
+
+          if (!plat.is('oneway')) return;
+
+          const playerFeet = this.pos.y + 4;
+          const platformTop = plat.pos.y;
+
+          if (playerFeet > platformTop || this.dropping) {
+            collision.preventResolution();
+          }
         });
       },
     },
