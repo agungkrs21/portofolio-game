@@ -45,7 +45,7 @@ k.loadSprite('char-male', '../asset/mainChar/Char_Boy.png', {
 });
 
 k.loadSprite('intro', '../maps/intro.png');
-k.loadSprite('room1', '../maps/room1.png')
+k.loadSprite('room1', '../maps/room1.png');
 k.loadSprite('border', '../asset/border/corner-edge.png', {
   sliceX: 2,
   sliceY: 1,
@@ -100,5 +100,12 @@ k.loadSprite('checkPoint', '../asset/objects/checkpoint.png', {
   sliceY: 1,
   anims: {
     active: { from: 0, to: 8 },
+  },
+});
+k.loadSprite('cryogenic', '../asset/objects/cryogenic.png', {
+  sliceX: 4,
+  sliceY: 1,
+  anims: {
+    idle: { from: 0, to: 3, loop: true, speed: 6 },
   },
 });

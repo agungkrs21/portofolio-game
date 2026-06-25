@@ -45,3 +45,15 @@ export function makeCheckPoint(k, intialPos) {
     'check-point',
   ]);
 }
+
+export function makeCryogenic(k, intialPos) {
+  return k.make([
+    k.pos(intialPos),
+    k.sprite('cryogenic', { anim: 'idle' }),
+    k.area({
+      shape: new k.Rect(k.vec2(0, 0), 50, 50),
+      collisionIgnore: ['collider'],
+    }),
+    'cryogenic',
+  ]);
+}

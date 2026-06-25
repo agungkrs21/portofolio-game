@@ -1,3 +1,4 @@
+import { makeCryogenic } from '../entities/Objects.js';
 import { makePlayer } from '../entities/player.js';
 import {
   setBackgroundColor,
@@ -8,7 +9,7 @@ import {
 export function room1(k, roomData) {
   setBackgroundColor(k, '#000000');
 
-  k.setGravity(1000);
+  k.setGravity(900);
   // k.debug.inspect = true;
 
   const map = k.add([k.pos(0, 0), k.sprite('room1')]);
@@ -29,6 +30,11 @@ export function room1(k, roomData) {
       player.setEvents();
       player.enablePassTrouhg();
       player.setMobileControsl();
+      continue;
+    }
+    if (position.name === 'cryogenic') {
+      const cryogenic = makeCryogenic(k, k.vec2(position.x, position.y));
+      map.add(cryogenic);
       continue;
     }
   }

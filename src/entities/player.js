@@ -15,7 +15,7 @@ export function makePlayer(k) {
     {
       speed: 120,
       accel: 400,
-      friction: 900,
+      friction: 1000,
       inputX: 0,
       isAttacking: false,
       jumheld: false,
