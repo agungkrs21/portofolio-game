@@ -37,9 +37,10 @@ export function makePlayer(k) {
               this.vel = k.vec2(this.vel.x, -300);
               this.jumheld = true;
             }
-            if (key === 'c') {
+            if (key === 'c' && this.isGrounded()) {
               if (!this.currentInteractable) return;
 
+              this.animSpeed = 1;
               if (this.isInteracting) {
                 this.currentInteractable.endInteract();
                 this.isInteracting = false;
@@ -110,6 +111,7 @@ export function makePlayer(k) {
         // to be honest thers has to be a better way to do this
         let releaseTimer = 0;
         let actionTimer = 0;
+        let latch = false;
 
         this.onUpdate(() => {
           if (inputState.get('hasMove') && !this.isInteracting) {
@@ -155,12 +157,26 @@ export function makePlayer(k) {
               this.vel = k.vec2(this.vel.x, -250);
               this.vel.y -= 70;
             }
+            if (inputState.get('confirm') && this.isGrounded() && !latch) {
+              if (!this.currentInteractable) return;
 
+              this.animSpeed = 1;
+              if (this.isInteracting) {
+                this.currentInteractable.endInteract();
+                this.isInteracting = false;
+              } else {
+                this.currentInteractable.interact();
+                this.isInteracting = true;
+              }
+              latch = true;
+            }
             actionTimer += k.dt();
             if (actionTimer >= 0.12) {
               actionTimer = 0;
               inputState.set('hasAction', false);
             }
+          } else if (latch) {
+            latch = false;
           }
         });
       },
@@ -187,7 +203,7 @@ export function makePlayer(k) {
         });
 
         this.onCollideEnd('interactable', (obj) => {
-          if (this.currentInteractable === obj) {
+          if (this.currentInteractable === obj && !this.isInteracting) {
             this.currentInteractable = null;
           }
         });
@@ -207,7 +223,7 @@ export function makePlayer(k) {
             this.vel.y *= 0.9;
           }
 
-          if (this.inputX !== 0) {
+          if (this.inputX !== 0 && !this.isInteracting) {
             this.vel.x += this.inputX * this.accel * k.dt();
 
             if (Math.abs(this.vel.x) > 5) {
