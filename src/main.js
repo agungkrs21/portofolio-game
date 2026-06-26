@@ -2,6 +2,7 @@ import { tounchControl } from './input/touch-controls.js';
 import { k } from './kplayLoader.js';
 import { intro } from './scene/intro.js';
 import { room1 } from './scene/room1.js';
+import { testAja } from './ui/renderToGui.js';
 
 async function main() {
   const introData = await (await fetch('../maps/intro.json')).json();
@@ -17,5 +18,7 @@ async function main() {
     room1(k, room1data);
   });
 }
+
+testAja();
 
 main().then(() => k.go('room1'));

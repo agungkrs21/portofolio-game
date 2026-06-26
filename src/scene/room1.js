@@ -1,5 +1,7 @@
 import { makeCryogenic } from '../entities/Objects.js';
 import { makePlayer } from '../entities/player.js';
+import { EVENT, off, on } from '../events/eventBus.js';
+import { changePlayerSprite } from '../ui/changeSprite.js';
 import {
   setBackgroundColor,
   setCameraControls,
@@ -22,6 +24,20 @@ export function room1(k, roomData) {
 
   setMapColliders(k, map, colliders);
   setCameraControls(k, map, player);
+
+  //global event
+  function handleEvent(e) {
+    if (e.type === EVENT.CHARACTER_SELECTED) {
+      changePlayerSprite(k, player, e.detail.character);
+    }
+  }
+
+  on(EVENT.CHARACTER_SELECTED, handleEvent);
+
+  k.onSceneLeave(() => {
+    off(EVENT.CHARACTER_SELECTED, handleEvent);
+  });
+
   for (const position of positions) {
     if (position.name === 'player') {
       map.add(player);
