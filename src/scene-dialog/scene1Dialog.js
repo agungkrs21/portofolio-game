@@ -99,7 +99,14 @@ function makePc1Dialog() {
 
 function makePc2Dialog() {
   return [
-    ` <div>
+    `<div>
+            <div class="char-pick-content pixel-font">
+              <p>
+              You need to find the key first
+              </p>
+            </div>
+          </div>`,
+    `<div>
             <div class="char-wrapper">
               <img
                 src="./asset/charFace/m1.png"
@@ -158,6 +165,14 @@ export const scene1Intro = {
   },
 };
 export const pcDialog = {
-  pc1: { title: 'FROM CAPTAIN', content: makePc1Dialog() },
-  pc2: { title: 'FROM CAPTAIN', content: makePc2Dialog() },
+  terminal_security: {
+    title: 'FROM CAPTAIN',
+    content: makePc1Dialog(),
+    dialogrequirement: 'disket',
+  },
+  terminal_elevator: {
+    title: 'FROM CAPTAIN',
+    content: makePc2Dialog(),
+    dialogrequirement: 'key',
+  },
 };

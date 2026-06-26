@@ -3,6 +3,7 @@ import {
   state,
   statePropsEnum,
 } from '../state/globalStateManager.js';
+import { renderToMenu } from '../ui/renderMenu.js';
 
 export function makeDoor(k, intialPos) {
   return k.make([
@@ -106,10 +107,13 @@ export function makePc(k, initialPos, tag) {
       shape: new k.Rect(k.vec2(-16, 0), 48, 32),
       collisionIgnore: ['collider'],
     }),
+    'interactable',
     tag,
     {
       dialog: null,
       condition: false,
+      callback: null,
+      endCallback: null,
 
       setDialog(value) {
         this.dialog = value;
@@ -153,6 +157,17 @@ export function makePc(k, initialPos, tag) {
           k.tween(1, 0, 0.5, (v) => (box.opacity = v), k.easings.easeInCirc);
           k.tween(1, 0, 0.5, (v) => (text.opacity = v), k.easings.easeInCirc);
         });
+      },
+      interact() {
+        // you know
+        this.callback?.(this);
+      },
+      endInteract() {
+        this.endCallback?.(this);
+      },
+      setCallback(callback, endCallback) {
+        this.callback = callback;
+        this.endCallback = endCallback;
       },
     },
   ]);

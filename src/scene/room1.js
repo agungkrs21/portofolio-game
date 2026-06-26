@@ -7,9 +7,9 @@ import {
 import { makePlayer } from '../entities/player.js';
 import { EVENT, off, on } from '../events/eventBus.js';
 import { pcDialog, scene1Intro } from '../scene-dialog/scene1Dialog.js';
-import { room1State } from '../state/globalStateManager.js';
+import { room1State, state } from '../state/globalStateManager.js';
 import { changePlayerSprite } from '../ui/changeSprite.js';
-import { renderToMenu } from '../ui/renderMenu.js';
+import { closeGui, renderToMenu } from '../ui/renderMenu.js';
 import {
   setBackgroundColor,
   setCameraControls,
@@ -77,11 +77,20 @@ export function room1(k, roomData) {
       disket.setEvents();
       continue;
     }
-    if (position.name === 'pc') {
+    if (position.type === 'pc') {
       const pc = makePc(k, k.vec2(position.x, position.y), position.type);
       map.add(pc);
-      pc.setDialog(pcDialog[position.type]);
+      pc.setDialog(pcDialog[position.name]);
       pc.setEvents();
+
+      // in callback method i use "this" so it can reference to itself
+      const callback = (pc) => {
+        const inventory = state.get('inventory');
+        const hasItem = inventory[pc.dialog.dialogrequirement] > 0;
+
+        renderToMenu(pc.dialog.title, pc.dialog.content[hasItem ? 1 : 0]);
+      };
+      pc.setCallback(callback, closeGui);
       continue;
     }
   }

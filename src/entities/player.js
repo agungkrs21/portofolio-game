@@ -20,6 +20,9 @@ export function makePlayer(k) {
       isAttacking: false,
       jumheld: false,
       dropping: false,
+      currentInteractable: null,
+      isInteracting: false,
+
       setPosition(x, y) {
         ((this.pos.x = x), (this.pos.y = y));
       },
@@ -29,14 +32,30 @@ export function makePlayer(k) {
         //special
         this.controlHandlers.push(
           k.onKeyPress((key) => {
-            if (key === 'z') {
+            if (key === 'z' && !this.isInteracting) {
               if (this.curAnim() !== 'jump') this.play('jump');
               this.vel = k.vec2(this.vel.x, -300);
               this.jumheld = true;
             }
+            if (key === 'c') {
+              if (!this.currentInteractable) return;
+
+              if (this.isInteracting) {
+                this.currentInteractable.endInteract();
+                this.isInteracting = false;
+              } else {
+                this.currentInteractable.interact();
+                this.isInteracting = true;
+              }
+            }
           }),
           k.onKeyDown((key) => {
-            if (this.jumheld && key === 'z' && this.vel.y < 0) {
+            if (
+              this.jumheld &&
+              key === 'z' &&
+              this.vel.y < 0 &&
+              !this.isInteracting
+            ) {
               this.vel.y -= 14;
             }
           }),
@@ -51,7 +70,10 @@ export function makePlayer(k) {
         // movement
         this.controlHandlers.push(
           k.onKeyDown((key) => {
-            if (key === 'left' || key === 'right') {
+            if (
+              (key === 'left' && !this.isInteracting) ||
+              (key === 'right' && !this.isInteracting)
+            ) {
               const direction =
                 key === 'left'
                   ? { dir: -1, flip: true }
@@ -90,7 +112,7 @@ export function makePlayer(k) {
         let actionTimer = 0;
 
         this.onUpdate(() => {
-          if (inputState.get('hasMove')) {
+          if (inputState.get('hasMove') && !this.isInteracting) {
             releaseTimer = 0;
 
             if (inputState.get('left')) {
@@ -125,7 +147,11 @@ export function makePlayer(k) {
 
         k.onUpdate(() => {
           if (inputState.get('hasAction')) {
-            if (inputState.get('jump') && this.isGrounded()) {
+            if (
+              inputState.get('jump') &&
+              this.isGrounded() &&
+              !this.isInteracting
+            ) {
               this.vel = k.vec2(this.vel.x, -250);
               this.vel.y -= 70;
             }
@@ -154,6 +180,16 @@ export function makePlayer(k) {
 
         this.onHeadbutt(() => {
           this.play('fall');
+        });
+
+        this.onCollide('interactable', (obj) => {
+          this.currentInteractable = obj;
+        });
+
+        this.onCollideEnd('interactable', (obj) => {
+          if (this.currentInteractable === obj) {
+            this.currentInteractable = null;
+          }
         });
 
         this.onAnimEnd((anim) => {
@@ -214,6 +250,11 @@ export function makePlayer(k) {
           if (playerFeet > platformTop || this.dropping) {
             collision.preventResolution();
           }
+        });
+      },
+      disableControls() {
+        this.controlHandlers.forEach((handler) => {
+          handler.cancel();
         });
       },
     },
