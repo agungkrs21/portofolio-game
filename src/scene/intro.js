@@ -6,11 +6,7 @@ import {
 } from '../entities/Objects.js';
 import { makePlayer } from '../entities/player.js';
 import { drawBorder } from '../ui/drawBorder.js';
-import {
-
-  setCameraControls,
-  setMapColliders,
-} from './sceneUtils.js';
+import { setCameraControls, setMapColliders } from './sceneUtils.js';
 
 export function intro(k, sceneData) {
   // drawBorder(k.width(), k.height());

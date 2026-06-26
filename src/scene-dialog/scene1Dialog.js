@@ -1,5 +1,5 @@
 import { emit, EVENT } from '../events/eventBus.js';
-
+import { closeGui } from '../ui/renderMenu.js';
 function makeContent() {
   return `<div> <h3 class="press-start-2p-regular char-pick-title">
             PICK YOUR CHARACTER
@@ -37,6 +37,7 @@ function makeContent() {
             <p>dekstop</p>
             <ul>
               <li>← → Move</li>
+              <li>↓ Drop Through Platform</li>
               <li>Z Jump</li>
               <li>X Attack</li>
               <li>C Confirm / Interact</li>
@@ -45,6 +46,7 @@ function makeContent() {
             <ul>
               <code>Use the on-screen gamepad.</code>
               <li>← → Move</li>
+              <li>↓ Drop Through Platform</li>
               <li>X Jump</li>
               <li>△ Attack</li>
               <li>○ Confirm / Interact</li>
@@ -81,7 +83,7 @@ export const scene1Intro = {
 
     this.container.addEventListener('pointerdown', this.handler);
   },
-  onConfirm(closeGui) {
+  onConfirm() {
     const confirmBtn = document.querySelector('#confirm-gui-btn');
 
     if (!confirmBtn) return;

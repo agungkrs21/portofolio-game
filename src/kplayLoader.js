@@ -105,7 +105,10 @@ k.loadSprite('items', '../asset/objects/Items.png', {
     key: {
       frames: [7, 15, 23, 31, 39, 47],
       loop: true,
-      speed: 6,
+    },
+    disket: {
+      frames: [5, 13, 21, 29, 37, 45],
+      loop: true,
     },
   },
 });
@@ -119,8 +122,9 @@ k.loadSprite('checkPoint', '../asset/objects/checkpoint.png', {
 });
 k.loadSprite('cryogenic', '../asset/objects/cryogenic.png', {
   sliceX: 4,
-  sliceY: 1,
+  sliceY: 2,
   anims: {
     idle: { from: 0, to: 3, loop: true, speed: 6 },
+    open: { from: 4, to: 7 },
   },
 });

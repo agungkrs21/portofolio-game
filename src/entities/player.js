@@ -84,7 +84,7 @@ export function makePlayer(k) {
           }),
         );
       },
-      setMobileControsl() {
+      setMobileControls() {
         // to be honest thers has to be a better way to do this
         let releaseTimer = 0;
         let actionTimer = 0;
