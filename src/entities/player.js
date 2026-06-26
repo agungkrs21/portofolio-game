@@ -14,61 +14,55 @@ export function makePlayer(k) {
     'player',
     {
       speed: 120,
-      accel: 400,
+      accel: 300,
       friction: 1000,
       inputX: 0,
       isAttacking: false,
       jumheld: false,
+      jumpTime: 0,
+      maxJumpHold: 0.22,
       dropping: false,
       currentInteractable: null,
       isInteracting: false,
+      //mobile movement condition
+      pendingAction: false,
+
+      playIfNeeded(anim) {
+        if (this.curAnim() !== anim) this.play(anim);
+      },
+
+      toggleInteraction() {
+        if (!this.currentInteractable) return;
+        this.animSpeed = 1;
+        if (this.isInteracting) {
+          this.currentInteractable.endInteract();
+        } else {
+          this.currentInteractable.interact();
+        }
+        this.isInteracting = !this.isInteracting;
+      },
 
       setPosition(x, y) {
         ((this.pos.x = x), (this.pos.y = y));
       },
+
       setControls() {
         this.controlHandlers = [];
 
-        //special
         this.controlHandlers.push(
           k.onKeyPress((key) => {
-            if (key === 'z' && !this.isInteracting) {
-              if (this.curAnim() !== 'jump') this.play('jump');
-              this.vel = k.vec2(this.vel.x, -300);
-              this.jumheld = true;
+            if (key === 'z' && this.isGrounded() && !this.isInteracting) {
+              this.playIfNeeded('jump');
+              this.vel.y = -300;
+              this.jumpHeld = true;
+              this.jumpTime = 0;
             }
             if (key === 'c' && this.isGrounded()) {
-              if (!this.currentInteractable) return;
-
-              this.animSpeed = 1;
-              if (this.isInteracting) {
-                this.currentInteractable.endInteract();
-                this.isInteracting = false;
-              } else {
-                this.currentInteractable.interact();
-                this.isInteracting = true;
-              }
-            }
-          }),
-          k.onKeyDown((key) => {
-            if (
-              this.jumheld &&
-              key === 'z' &&
-              this.vel.y < 0 &&
-              !this.isInteracting
-            ) {
-              this.vel.y -= 14;
-            }
-          }),
-          k.onKeyRelease((key) => {
-            if (key === 'z') {
-              this.jumheld = false;
-              this.vel.y *= 0.5;
+              this.toggleInteraction();
             }
           }),
         );
 
-        // movement
         this.controlHandlers.push(
           k.onKeyDown((key) => {
             if (
@@ -92,31 +86,69 @@ export function makePlayer(k) {
             if (key === 'left' || key === 'right') {
               this.inputX = 0;
               this.animSpeed = 1;
+              if (this.curAnim() === 'walk') this.play('idle');
             }
             if (key === 'down') {
               this.dropping = false;
             }
-            if (
-              this.curAnim() !== 'idle' &&
-              this.curAnim() !== 'jump' &&
-              this.curAnim() !== 'fall' &&
-              this.curAnim() !== 'attack'
-            ) {
-              this.play('idle');
+            if (key === 'z') {
+              this.jumheld = false;
             }
           }),
         );
       },
-      setMobileControls() {
-        // to be honest thers has to be a better way to do this
-        let releaseTimer = 0;
-        let actionTimer = 0;
-        let latch = false;
 
-        this.onUpdate(() => {
-          if (inputState.get('hasMove') && !this.isInteracting) {
-            releaseTimer = 0;
+      updateVelocity() {
+        // limit y velocity to avoid falling trough collision
+        if (this.vel.y > 400) {
+          this.vel.y = 400;
+        }
+        if (!this.isGrounded() && Math.abs(this.vel.y) < 40) {
+          this.vel.y *= 0.9;
+        }
+        if (
+          this.jumpHeld &&
+          this.vel.y < 0 &&
+          this.jumpTime < this.maxJumpHold
+        ) {
+          this.vel.y -= 14;
+          this.jumpTime += k.dt();
+        }
 
+        if (this.inputX !== 0 && !this.isInteracting) {
+          this.vel.x += this.inputX * this.accel * k.dt();
+
+          if (Math.abs(this.vel.x) > 5) {
+            if (
+              this.curAnim() !== 'walk' &&
+              this.curAnim() !== 'jump' &&
+              this.curAnim() !== 'land' &&
+              this.isGrounded()
+            ) {
+              this.play('walk');
+            }
+
+            const ratio = Math.abs(this.vel.x) / this.speed;
+            this.animSpeed = 0.7 + Math.pow(ratio, 3) * 1.3;
+          }
+        } else if (this.isGrounded()) {
+          if (this.vel.x > 0) {
+            this.vel.x -= this.friction * k.dt();
+            this.vel.x = Math.max(0, this.vel.x);
+          }
+
+          if (this.vel.x < 0) {
+            this.vel.x += this.friction * k.dt();
+            this.vel.x = Math.min(0, this.vel.x);
+          }
+        }
+
+        this.vel.x = k.clamp(this.vel.x, -this.speed, this.speed);
+      },
+
+      updateMobileInput() {
+        if (inputState.get('hasMove')) {
+          if (!this.isInteracting) {
             if (inputState.get('left')) {
               this.inputX = 1;
               this.flipX = false;
@@ -128,56 +160,38 @@ export function makePlayer(k) {
             if (inputState.get('down')) {
               this.dropping = true;
             }
-
-            releaseTimer += k.dt();
-          } else if (releaseTimer > 0) {
-            releaseTimer = 0;
-            this.inputX = 0;
-            this.animSpeed = 1;
-            this.dropping = false;
-
-            if (
-              this.curAnim() !== 'idle' &&
-              this.curAnim() !== 'jump' &&
-              this.curAnim() !== 'fall' &&
-              this.curAnim() !== 'attack'
-            ) {
-              this.play('idle');
-            }
+            this.pendingAction = true;
           }
-        });
+        } else if (!inputState.get('hasMove') && this.pendingAction) {
+          this.inputX = 0;
+          this.animSpeed = 1;
+          this.dropping = false;
+          this.play('idle');
 
-        k.onUpdate(() => {
-          if (inputState.get('hasAction')) {
-            if (
-              inputState.get('jump') &&
-              this.isGrounded() &&
-              !this.isInteracting
-            ) {
-              this.vel = k.vec2(this.vel.x, -250);
-              this.vel.y -= 70;
-            }
-            if (inputState.get('confirm') && this.isGrounded() && !latch) {
-              if (!this.currentInteractable) return;
+          this.pendingAction = false;
+        }
 
-              this.animSpeed = 1;
-              if (this.isInteracting) {
-                this.currentInteractable.endInteract();
-                this.isInteracting = false;
-              } else {
-                this.currentInteractable.interact();
-                this.isInteracting = true;
-              }
-              latch = true;
-            }
-            actionTimer += k.dt();
-            if (actionTimer >= 0.12) {
-              actionTimer = 0;
-              inputState.set('hasAction', false);
-            }
-          } else if (latch) {
-            latch = false;
+        if (inputState.get('hasAction')) {
+          if (
+            inputState.get('jump') &&
+            this.isGrounded() &&
+            !this.isInteracting
+          ) {
+            this.vel.y = -320;
           }
+          if (inputState.get('confirm') && this.isGrounded()) {
+            this.toggleInteraction();
+            inputState.set('hasAction', false);
+          }
+        }
+      },
+
+      runUpdate() {
+        // to be honest thers has to be a better way to do this
+
+        this.onUpdate(() => {
+          this.updateVelocity();
+          this.updateMobileInput();
         });
       },
 
@@ -189,10 +203,6 @@ export function makePlayer(k) {
         this.onGround(() => {
           this.play('land');
         });
-
-        // this.onFallOff(() => {
-        //   this.play('fall');
-        // });
 
         this.onHeadbutt(() => {
           this.play('fall');
@@ -213,47 +223,8 @@ export function makePlayer(k) {
             this.play('idle');
           }
         });
-
-        this.onUpdate(() => {
-          // limit y velocity to avoid falling trough collision
-          if (this.vel.y > 400) {
-            this.vel.y = 400;
-          }
-          if (!this.isGrounded() && Math.abs(this.vel.y) < 40) {
-            this.vel.y *= 0.9;
-          }
-
-          if (this.inputX !== 0 && !this.isInteracting) {
-            this.vel.x += this.inputX * this.accel * k.dt();
-
-            if (Math.abs(this.vel.x) > 5) {
-              if (
-                this.curAnim() !== 'walk' &&
-                this.curAnim() !== 'jump' &&
-                this.curAnim() !== 'land' &&
-                this.isGrounded()
-              ) {
-                this.play('walk');
-              }
-
-              const ratio = Math.abs(this.vel.x) / this.speed;
-              this.animSpeed = 0.7 + Math.pow(ratio, 3) * 1.3;
-            }
-          } else if (this.isGrounded()) {
-            if (this.vel.x > 0) {
-              this.vel.x -= this.friction * k.dt();
-              this.vel.x = Math.max(0, this.vel.x);
-            }
-
-            if (this.vel.x < 0) {
-              this.vel.x += this.friction * k.dt();
-              this.vel.x = Math.min(0, this.vel.x);
-            }
-          }
-
-          this.vel.x = k.clamp(this.vel.x, -this.speed, this.speed);
-        });
       },
+
       enablePassTrouhg() {
         this.onBeforePhysicsResolve((collision) => {
           const plat = collision.target;
@@ -268,6 +239,7 @@ export function makePlayer(k) {
           }
         });
       },
+
       disableControls() {
         this.controlHandlers.forEach((handler) => {
           handler.cancel();

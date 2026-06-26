@@ -30,11 +30,15 @@ export function room1(k, roomData) {
   );
   const player = makePlayer(k);
   const cryogenic = makeCryogenic(k, room1State.get('cryrogenic'));
-
   let playerPosition = null;
 
   const colliders = sceneLayers.colliders.objects;
   const positions = sceneLayers.positions.objects;
+  const roomState = {
+    key: room1State.get('key'),
+    disket: room1State.get('disket'),
+    cryogenic: room1State.get('cryrogenic'),
+  };
 
   async function roomEvent() {
     cryogenic.play('open');
@@ -46,7 +50,7 @@ export function room1(k, roomData) {
     player.setControls();
     player.setEvents();
     player.enablePassTrouhg();
-    player.setMobileControls();
+    player.runUpdate();
     setCameraControls(k, map, player);
   }
 
@@ -65,13 +69,13 @@ export function room1(k, roomData) {
       continue;
     }
     // becouse i only planning on adding 1 key and one disket in every room this will do
-    if (position.name === 'key' && room1State.get('key') > 0) {
+    if (position.name === 'key' && roomState.key > 0) {
       const key = makeKey(k, k.vec2(position.x, position.y));
       map.add(key);
       key.setEvents();
       continue;
     }
-    if (position.name === 'disket' && room1State.get('disket') > 0) {
+    if (position.name === 'disket' && roomState.disket > 0) {
       const disket = makeDisket(k, k.vec2(position.x, position.y));
       map.add(disket);
       disket.setEvents();
@@ -84,12 +88,12 @@ export function room1(k, roomData) {
       pc.setEvents();
 
       // in callback method i use "this" so it can reference to itself
-      const callback = (pc) => {
+      function callback(pc) {
         const inventory = state.get('inventory');
         const hasItem = inventory[pc.dialog.dialogrequirement] > 0;
 
         renderToMenu(pc.dialog.title, pc.dialog.content[hasItem ? 1 : 0]);
-      };
+      }
       pc.setCallback(callback, closeGui);
       continue;
     }
