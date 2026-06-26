@@ -1,10 +1,10 @@
-import { intro } from '../sceneDialog/room1Dialog.js';
+import { scene1Intro } from '../scene-dialog/scene1Dialog.js';
 
 const guiContent = document.querySelector('.text-container');
 const guiTitleBox = document.querySelector('.gui-title');
 const guiTitle = document.querySelector('#title-text');
 
-export function renderToGui(title = '', content = '') {
+function renderToMenu(title = '', content = '') {
   guiTitleBox.classList.remove('hidden');
   guiContent.classList.remove('hidden');
 
@@ -21,7 +21,7 @@ function closeGui() {
 }
 
 export function testAja() {
-  renderToGui(intro.title, intro.content);
-  intro.listen();
-  intro.onConfirm(closeGui);
+  renderToMenu(scene1Intro.title, scene1Intro.content);
+  scene1Intro.listen();
+  scene1Intro.onConfirm(closeGui);
 }

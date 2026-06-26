@@ -1,6 +1,6 @@
 import { emit, EVENT } from '../events/eventBus.js';
 
-function createIntro() {
+function makeContent() {
   return `<div> <h3 class="press-start-2p-regular char-pick-title">
             PICK YOUR CHARACTER
           </h3>
@@ -56,9 +56,9 @@ function createIntro() {
           </div></div>`;
 }
 
-export const intro = {
+export const scene1Intro = {
   title: 'SCROLL DOWN TO CONFIRM',
-  content: createIntro(),
+  content: makeContent(),
 
   selectedCharacter: null,
   container: null,
@@ -69,6 +69,7 @@ export const intro = {
 
     this.handler = (e) => {
       const char = e.target.closest('.char');
+
       if (!char) return;
 
       this.selectedCharacter = char.id;
@@ -80,7 +81,6 @@ export const intro = {
 
     this.container.addEventListener('pointerdown', this.handler);
   },
-
   onConfirm(closeGui) {
     const confirmBtn = document.querySelector('#confirm-gui-btn');
 
@@ -90,10 +90,9 @@ export const intro = {
       if (!this.selectedCharacter) return;
 
       this.container?.removeEventListener('pointerdown', this.handler);
+      closeGui();
 
       emit(EVENT.CHARACTER_SELECTED, { character: this.selectedCharacter });
-
-      closeGui();
     };
   },
 };

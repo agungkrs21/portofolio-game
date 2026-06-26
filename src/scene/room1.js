@@ -25,17 +25,17 @@ export function room1(k, roomData) {
   setMapColliders(k, map, colliders);
   setCameraControls(k, map, player);
 
-  //global event
-  function handleEvent(e) {
+  function handleGlobalEvent(e) {
     if (e.type === EVENT.CHARACTER_SELECTED) {
       changePlayerSprite(k, player, e.detail.character);
     }
   }
 
-  on(EVENT.CHARACTER_SELECTED, handleEvent);
+  //Global Event
+  on(EVENT.CHARACTER_SELECTED, handleGlobalEvent);
 
   k.onSceneLeave(() => {
-    off(EVENT.CHARACTER_SELECTED, handleEvent);
+    off(EVENT.CHARACTER_SELECTED, handleGlobalEvent);
   });
 
   for (const position of positions) {
