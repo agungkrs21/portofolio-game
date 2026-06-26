@@ -12,6 +12,8 @@ export const k = kaplay({
   global: false,
 });
 
+k.loadFont('pixel-font', '../asset/font/PixelifySans-VariableFont_wght.ttf');
+
 k.loadSprite('char-robot', '../asset/mainChar/Char_Robot.png', {
   sliceX: 8,
   sliceY: 6,
@@ -126,5 +128,13 @@ k.loadSprite('cryogenic', '../asset/objects/cryogenic.png', {
   anims: {
     idle: { from: 0, to: 3, loop: true, speed: 6 },
     open: { from: 4, to: 7 },
+  },
+});
+k.loadSprite('interact-box', '../asset/border/interact-box.png', {
+  sliceX: 6,
+  sliceY: 1,
+  anims: {
+    open: { from: 0, to: 5 },
+    close: { from: 5, to: 0 },
   },
 });

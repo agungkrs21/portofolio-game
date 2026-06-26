@@ -57,6 +57,65 @@ function makeContent() {
             <button id="confirm-gui-btn" class="pixel-font">Confirm</button>
           </div></div>`;
 }
+function makePc1Dialog() {
+  return [
+    ` <div>
+            <div class="char-wrapper">
+              <img
+                src="./asset/charFace/m1.png"
+                alt="player"
+                class="char-img"
+              />
+              <h4 class="player-name press-start-2p-regular">AGUNG</h4>
+            </div>
+            <div class="char-pick-content pixel-font">
+              <p>
+                Sorry for trapping you in that room. I forgot to disable the
+                trap while I was performing maintenance. You can take the floppy
+                disk and the key up there to disable the trap and restore power
+                to the elevator door.
+              </p>
+
+            </div>
+          </div>`,
+    ` <div>
+            <div class="char-wrapper">
+              <img
+                src="./asset/charFace/m1.png"
+                alt="player"
+                class="char-img"
+              />
+              <h4 class="player-name press-start-2p-regular">AGUNG</h4>
+            </div>
+            <div class="char-pick-content pixel-font">
+              <p>
+                The trap should be disabled now. Insert your key into the
+                computer next to the elevator to unlock it.
+              </p>
+            </div>
+          </div>`,
+  ];
+}
+
+function makePc2Dialog() {
+  return [
+    ` <div>
+            <div class="char-wrapper">
+              <img
+                src="./asset/charFace/m1.png"
+                alt="player"
+                class="char-img"
+              />
+              <h4 class="player-name press-start-2p-regular">AGUNG</h4>
+            </div>
+            <div class="char-pick-content pixel-font">
+              <p>
+               Power restored. Elevator systems are now online.
+              </p>
+            </div>
+          </div>`,
+  ];
+}
 
 export const scene1Intro = {
   title: 'SCROLL DOWN TO CONFIRM',
@@ -97,4 +156,8 @@ export const scene1Intro = {
       emit(EVENT.CHARACTER_SELECTED, { character: this.selectedCharacter });
     };
   },
+};
+export const pcDialog = {
+  pc1: { title: 'FROM CAPTAIN', content: makePc1Dialog() },
+  pc2: { title: 'FROM CAPTAIN', content: makePc2Dialog() },
 };

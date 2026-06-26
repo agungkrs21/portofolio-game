@@ -99,3 +99,61 @@ export function makeCryogenic(k, animState) {
     },
   ]);
 }
+export function makePc(k, initialPos, tag) {
+  return k.make([
+    k.pos(initialPos),
+    k.area({
+      shape: new k.Rect(k.vec2(-16, 0), 48, 32),
+      collisionIgnore: ['collider'],
+    }),
+    tag,
+    {
+      dialog: null,
+      condition: false,
+
+      setDialog(value) {
+        this.dialog = value;
+      },
+      setEvents() {
+        const box = this.add([
+          k.pos(8, -8),
+          k.anchor('center'),
+          k.scale(0.8),
+          k.sprite('interact-box'),
+          k.opacity(0),
+        ]);
+
+        const text = this.add([
+          k.pos(8, -8),
+          k.anchor('center'),
+          k.text('pc', { size: 6, font: 'pixel-font' }),
+          k.color(k.Color.fromHex('#000000')),
+          k.opacity(0),
+        ]);
+        this.onCollide('player', () => {
+          k.tween(
+            box.opacity,
+            1,
+            0.2,
+            (v) => (box.opacity = v),
+            k.easings.easeInCirc,
+          );
+          k.tween(
+            text.opacity,
+            1,
+            0.5,
+            (v) => (text.opacity = v),
+            k.easings.easeInCirc,
+          );
+
+          box.play('open');
+        });
+        this.onCollideEnd('player', () => {
+          box.play('close');
+          k.tween(1, 0, 0.5, (v) => (box.opacity = v), k.easings.easeInCirc);
+          k.tween(1, 0, 0.5, (v) => (text.opacity = v), k.easings.easeInCirc);
+        });
+      },
+    },
+  ]);
+}

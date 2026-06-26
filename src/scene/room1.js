@@ -1,7 +1,12 @@
-import { makeCryogenic, makeDisket, makeKey } from '../entities/Objects.js';
+import {
+  makeCryogenic,
+  makeDisket,
+  makeKey,
+  makePc,
+} from '../entities/Objects.js';
 import { makePlayer } from '../entities/player.js';
 import { EVENT, off, on } from '../events/eventBus.js';
-import { scene1Intro } from '../scene-dialog/scene1Dialog.js';
+import { pcDialog, scene1Intro } from '../scene-dialog/scene1Dialog.js';
 import { room1State } from '../state/globalStateManager.js';
 import { changePlayerSprite } from '../ui/changeSprite.js';
 import { renderToMenu } from '../ui/renderMenu.js';
@@ -17,7 +22,7 @@ export function room1(k, roomData) {
   k.setGravity(900);
   k.setCamPos(184, 205);
 
-  k.debug.inspect = true;
+  // k.debug.inspect = true;
 
   const map = k.add([k.pos(0, 0), k.sprite('room1')]);
   const sceneLayers = Object.fromEntries(
@@ -70,6 +75,13 @@ export function room1(k, roomData) {
       const disket = makeDisket(k, k.vec2(position.x, position.y));
       map.add(disket);
       disket.setEvents();
+      continue;
+    }
+    if (position.name === 'pc') {
+      const pc = makePc(k, k.vec2(position.x, position.y), position.type);
+      map.add(pc);
+      pc.setDialog(pcDialog[position.type]);
+      pc.setEvents();
       continue;
     }
   }
