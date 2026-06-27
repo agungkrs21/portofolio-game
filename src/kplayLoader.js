@@ -138,3 +138,11 @@ k.loadSprite('interact-box', '../asset/border/interact-box.png', {
     close: { from: 5, to: 0 },
   },
 });
+
+k.loadSprite('t-blade', '../asset/traps/Trap5.png', {
+  sliceX: 4,
+  sliceY: 1,
+  anims: {
+    spin: { from: 0, to: 3, loop: true },
+  },
+});

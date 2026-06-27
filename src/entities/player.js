@@ -1,5 +1,6 @@
-import { state } from '../state/globalStateManager.js';
+import { state, statePropsEnum } from '../state/globalStateManager.js';
 import { inputState } from '../state/mobileControlStateManager.js';
+import { makeBlink } from './sharedEntitiesLogic.js';
 
 export function makePlayer(k) {
   return k.make([
@@ -10,7 +11,9 @@ export function makePlayer(k) {
     }),
     k.anchor('center'),
     k.body({ mass: 100, jumpForce: 350, gravityScale: 2 }),
+    k.health(state.get(statePropsEnum.playerHp)),
     k.z(2),
+    k.opacity(1),
     'player',
     {
       speed: 120,
@@ -24,6 +27,7 @@ export function makePlayer(k) {
       dropping: false,
       currentInteractable: null,
       isInteracting: false,
+      invincible: false,
       //mobile movement condition
       pendingAction: false,
 
@@ -100,8 +104,8 @@ export function makePlayer(k) {
 
       updateVelocity() {
         // limit y velocity to avoid falling trough collision
-        if (this.vel.y > 400) {
-          this.vel.y = 400;
+        if (this.vel.y > 300) {
+          this.vel.y = 300;
         }
         if (!this.isGrounded() && Math.abs(this.vel.y) < 40) {
           this.vel.y *= 0.9;
@@ -243,6 +247,39 @@ export function makePlayer(k) {
       disableControls() {
         this.controlHandlers.forEach((handler) => {
           handler.cancel();
+        });
+      },
+
+      canTakeDamge() {
+        const damage = (amount) => {
+          if (this.invincible) return;
+          this.invincible = true;
+
+          if (this.hp() - amount < 0) {
+            // TODO;
+          }
+
+          makeBlink(k, this);
+          this.hurt(amount);
+        };
+        const knockBack = (tpos, powerX = 200, powerY = 100) => {
+          const p = this.pos;
+          const t = tpos;
+
+          const dx = p.x - t.x;
+          const dy = p.y - t.y;
+
+          // left and right collison
+          if (Math.abs(dx) > Math.abs(dy)) {
+            this.vel.x = Math.sign(dx) * powerX;
+            this.vel.y = -120;
+          } else {
+            this.vel.y = Math.sign(dy) * powerY;
+          }
+        };
+        this.onCollide('trap', (source) => {
+          knockBack(source.pos, source.powerX, source.powerY);
+          damage(source.damage);
         });
       },
     },

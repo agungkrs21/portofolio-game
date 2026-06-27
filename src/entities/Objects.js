@@ -71,6 +71,23 @@ export function makeDisket(k, intialPos) {
   ]);
 }
 
+export function makeTBlades(k, position) {
+  return k.make([
+    k.pos(k.vec2(position.x, position.y)),
+    k.sprite('t-blade', { anim: 'spin' }),
+    k.anchor('center'),
+    k.area({
+      shape: new k.Rect(k.vec2(0), 32, 32),
+    }),
+    position.type,
+    {
+      damage: 1,
+      powerX: 200,
+      powerY: 200,
+    },
+  ]);
+}
+
 export function makeCheckPoint(k, intialPos) {
   return k.make([
     k.pos(intialPos),

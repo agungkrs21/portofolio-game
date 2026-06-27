@@ -791,15 +791,15 @@
                 {
                  "height":0,
                  "id":34,
-                 "name":"trap",
+                 "name":"blade",
                  "opacity":1,
                  "point":true,
                  "rotation":0,
-                 "type":"blade",
+                 "type":"trap",
                  "visible":true,
                  "width":0,
-                 "x":368,
-                 "y":160
+                 "x":393,
+                 "y":193
                 }, 
                 {
                  "height":0,

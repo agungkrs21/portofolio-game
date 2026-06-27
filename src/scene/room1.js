@@ -3,6 +3,7 @@ import {
   makeDisket,
   makeKey,
   makePc,
+  makeTBlades,
 } from '../entities/Objects.js';
 import { makePlayer } from '../entities/player.js';
 import { EVENT, off, on } from '../events/eventBus.js';
@@ -22,7 +23,7 @@ export function room1(k, roomData) {
   k.setGravity(900);
   k.setCamPos(184, 205);
 
-  // k.debug.inspect = true;
+  k.debug.inspect = true;
 
   const map = k.add([k.pos(0, 0), k.sprite('room1')]);
   const sceneLayers = Object.fromEntries(
@@ -51,6 +52,7 @@ export function room1(k, roomData) {
     player.setEvents();
     player.enablePassTrouhg();
     player.runUpdate();
+    player.canTakeDamge();
     setCameraControls(k, map, player);
   }
 
@@ -96,6 +98,10 @@ export function room1(k, roomData) {
       }
       pc.setCallback(callback, closeGui);
       continue;
+    }
+    if (position.name === 'blade') {
+      const blade = makeTBlades(k, position);
+      map.add(blade);
     }
   }
 
