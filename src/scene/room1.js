@@ -1,13 +1,18 @@
 import {
   makeCryogenic,
   makeDisket,
+  makeDoor,
   makeKey,
   makePc,
   makeTBlades,
 } from '../entities/Objects.js';
 import { makePlayer } from '../entities/player.js';
 import { EVENT, off, on } from '../events/eventBus.js';
-import { pcDialog, scene1Intro } from '../scene-dialog/scene1Dialog.js';
+import {
+  liftDialog,
+  pcDialog,
+  scene1Intro,
+} from '../scene-dialog/scene1Dialog.js';
 import { room1State, state } from '../state/globalStateManager.js';
 import { changePlayerSprite } from '../ui/changeSprite.js';
 import { closeGui, renderToMenu } from '../ui/renderMenu.js';
@@ -15,6 +20,7 @@ import {
   setBackgroundColor,
   setCameraControls,
   setMapColliders,
+  startTransision,
 } from './sceneUtils.js';
 
 export function room1(k, roomData) {
@@ -23,7 +29,7 @@ export function room1(k, roomData) {
   k.setGravity(900);
   k.setCamPos(184, 205);
 
-  k.debug.inspect = true;
+  // k.debug.inspect = true;
 
   const map = k.add([k.pos(0, 0), k.sprite('room1')]);
   const sceneLayers = Object.fromEntries(
@@ -31,6 +37,8 @@ export function room1(k, roomData) {
   );
   const player = makePlayer(k);
   const cryogenic = makeCryogenic(k, room1State.get('cryrogenic'));
+  const tblade = makeTBlades(k);
+
   let playerPosition = null;
 
   const colliders = sceneLayers.colliders.objects;
@@ -39,6 +47,8 @@ export function room1(k, roomData) {
     key: room1State.get('key'),
     disket: room1State.get('disket'),
     cryogenic: room1State.get('cryrogenic'),
+    blade: room1State.get('blade'),
+    elevator: room1State.get('elevator'),
   };
 
   async function roomEvent() {
@@ -52,6 +62,7 @@ export function room1(k, roomData) {
     player.setEvents();
     player.enablePassTrouhg();
     player.runUpdate();
+    player.isInteracting = false;
     player.canTakeDamge();
     setCameraControls(k, map, player);
   }
@@ -84,7 +95,7 @@ export function room1(k, roomData) {
       continue;
     }
     if (position.type === 'pc') {
-      const pc = makePc(k, k.vec2(position.x, position.y), position.type);
+      const pc = makePc(k, k.vec2(position.x, position.y), position.name);
       map.add(pc);
       pc.setDialog(pcDialog[position.name]);
       pc.setEvents();
@@ -92,16 +103,63 @@ export function room1(k, roomData) {
       // in callback method i use "this" so it can reference to itself
       function callback(pc) {
         const inventory = state.get('inventory');
-        const hasItem = inventory[pc.dialog.dialogrequirement] > 0;
+        const item = pc.dialog.dialogrequirement;
+        const hasItem = inventory[item] > 0;
 
         renderToMenu(pc.dialog.title, pc.dialog.content[hasItem ? 1 : 0]);
+
+        if (!hasItem || pc.copletedEvent) return;
+
+        pc.copletedEvent = true;
+        state.updateInventory('sub', item, 1);
+
+        // Room1 has a unique puzzle, so I keep this event here instead of creating
+        // a generic event system.
+        if (item === 'disket') {
+          tblade.play('stop');
+          tblade.unuse('area');
+          room1State.set('blade', false);
+        }
+        if (item === 'key') {
+          room1State.set('elevator', true);
+        }
       }
       pc.setCallback(callback, closeGui);
       continue;
     }
+    if (position.type === 'door') {
+      const door = makeDoor(k, k.vec2(position.x, position.y), position.name);
+      map.add(door);
+      door.setDialog(liftDialog);
+      door.setEvents();
+
+      function callback(door) {
+        const requirement = room1State.get(door.dialog.dialogrequirement);
+
+        renderToMenu(
+          door.dialog.title,
+          door.dialog.content[requirement ? 1 : 0],
+        );
+
+        if (requirement) door.dialog.listen();
+      }
+      function endCallback(door) {
+        const requirement = room1State.get(door.dialog.dialogrequirement);
+        if (requirement) door.dialog.onConfirm();
+        closeGui();
+      }
+      door.setCallback(callback, endCallback);
+    }
     if (position.name === 'blade') {
-      const blade = makeTBlades(k, position);
-      map.add(blade);
+      map.add(tblade);
+      tblade.setPosition(position.x, position.y);
+      tblade.play('spin');
+      // i know this is only work for 1 blade but that will do for now
+      if (!roomState.blade) {
+        tblade.play('stop');
+        tblade.unuse('area');
+      }
+      continue;
     }
   }
 
@@ -119,10 +177,17 @@ export function room1(k, roomData) {
       changePlayerSprite(k, player, e.detail.character);
       roomEvent();
     }
+    if (e.type === EVENT.SITE_SELECTED) {
+      console.log(e.detail.site);
+      closeGui();
+      startTransision(k, map, e.detail.site);
+    }
   }
-  on(EVENT.CHARACTER_SELECTED, handleGlobalEvent);
 
+  on(EVENT.CHARACTER_SELECTED, handleGlobalEvent);
+  on(EVENT.SITE_SELECTED, handleGlobalEvent);
   k.onSceneLeave(() => {
     off(EVENT.CHARACTER_SELECTED, handleGlobalEvent);
+    off(EVENT.SITE_SELECTED, handleGlobalEvent);
   });
 }

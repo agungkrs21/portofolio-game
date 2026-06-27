@@ -3,4 +3,5 @@ export const EVENT = {
   GAME_START: 'game:start',
   GAME_END: 'game:end',
   PLAYER_DEAD: 'player:dead',
+  SITE_SELECTED: 'site:selected',
 };

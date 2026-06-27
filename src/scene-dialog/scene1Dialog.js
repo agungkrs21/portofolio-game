@@ -123,7 +123,33 @@ function makePc2Dialog() {
           </div>`,
   ];
 }
-
+function makeEvelevatorDialog() {
+  return [
+    `<div>
+    <p class="pixel-font">Hmm... It seems to be offline.</p>
+    </div`,
+    ` <div class="lift-gui-wrapper pixel-font">
+            <h4 class="lift-gui-title">Choose a Site</h4>
+            <div class="lift-menu-wrapper">
+              <div class="lift-gui-cat">
+                <img
+                  src="./asset/charFace/lift-cat.png"
+                  alt="list-cat"
+                  class="lift-cat"
+                />
+              </div>
+              <div class="lift-gui-site">
+                <ul>
+                  <li class="lift-site" id="about">About Me</li>
+                  <li class="lift-site" id="projects">Projects</li>
+                  <li class="lift-site" id="skills">Skills</li>
+                  <li class="lift-site" id="contact">Contact</li>
+                </ul>
+              </div>
+            </div>
+          </div>`,
+  ];
+}
 export const scene1Intro = {
   title: 'SCROLL DOWN TO CONFIRM',
   content: makeContent(),
@@ -174,5 +200,28 @@ export const pcDialog = {
     title: 'FROM CAPTAIN',
     content: makePc2Dialog(),
     dialogrequirement: 'key',
+  },
+};
+export const liftDialog = {
+  title: 'Lift Operator',
+  content: makeEvelevatorDialog(),
+
+  dialogrequirement: 'elevator',
+  container: null,
+  handler: null,
+
+  listen() {
+    this.container = document.querySelector('.lift-gui-site');
+
+    this.handler = (e) => {
+      if (!e.target.id) return;
+      this.onConfirm();
+      emit(EVENT.SITE_SELECTED, { site: e.target.id });
+    };
+
+    this.container.addEventListener('pointerdown', this.handler);
+  },
+  onConfirm() {
+    this.container.removeEventListener('pointerdown', this.handler);
   },
 };

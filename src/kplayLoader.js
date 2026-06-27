@@ -144,5 +144,6 @@ k.loadSprite('t-blade', '../asset/traps/Trap5.png', {
   sliceY: 1,
   anims: {
     spin: { from: 0, to: 3, loop: true },
+    stop: { from: 0, to: 3 },
   },
 });

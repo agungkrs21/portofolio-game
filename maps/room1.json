@@ -726,11 +726,11 @@
                 {
                  "height":0,
                  "id":29,
-                 "name":"door",
+                 "name":"elevator",
                  "opacity":1,
                  "point":true,
                  "rotation":0,
-                 "type":"point ",
+                 "type":"door",
                  "visible":true,
                  "width":0,
                  "x":528,

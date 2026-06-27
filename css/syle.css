@@ -283,3 +283,49 @@ img {
     justify-content: center;
   }
 }
+
+/* lift gui */
+.lift-gui-wrapper {
+  text-align: center;
+  width: 100%;
+}
+.lift-menu-wrapper {
+  display: flex;
+}
+
+.lift-gui-cat {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lift-cat {
+  width: 150px;
+  height: auto;
+  image-rendering: pixelated;
+}
+.lift-gui-title {
+  font-size: 1.2rem;
+}
+
+.lift-gui-site {
+  width: 100%;
+}
+.lift-gui-site ul {
+  list-style-type: none;
+}
+
+.lift-gui-site .lift-site {
+  border: 2px solid transparent;
+  padding: 0.5rem;
+  width: 100%;
+  margin: 0.8rem 0;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.lift-gui-site .lift-site:hover {
+  border: 2px solid white;
+  translate: 0 -5px;
+}

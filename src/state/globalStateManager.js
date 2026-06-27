@@ -54,6 +54,8 @@ function initRoom1State() {
     key: 1,
     disket: 1,
     cryrogenic: 'idle',
+    elevator: false,
+    blade: true,
   };
 
   return {

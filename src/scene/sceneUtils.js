@@ -54,3 +54,20 @@ export function setCameraControls(k, map, player) {
     );
   });
 }
+
+export async function startTransision(k, from, to) {
+  const background = k.add([
+    k.pos(0, from.width),
+    k.rect(from.width, from.height),
+    k.color('#000000'),
+  ]);
+  await k.tween(
+    background.pos.y,
+    0,
+    0.3,
+    (v) => (background.pos.y = v),
+    k.easings.linear,
+  );
+  k.go('intro');
+  console.log(from.width, from.height);
+}

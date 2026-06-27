@@ -5,18 +5,6 @@ import {
 } from '../state/globalStateManager.js';
 import { renderToMenu } from '../ui/renderMenu.js';
 
-export function makeDoor(k, intialPos) {
-  return k.make([
-    k.pos(intialPos),
-    k.sprite('door'),
-    k.area({
-      shape: new k.Rect(k.vec2(10, 0), 28, 38),
-      collisionIgnore: ['collider'],
-    }),
-    'door',
-  ]);
-}
-
 export function makeBox(k, intialPos) {
   return k.make([
     k.pos(intialPos),
@@ -71,19 +59,25 @@ export function makeDisket(k, intialPos) {
   ]);
 }
 
-export function makeTBlades(k, position) {
+export function makeTBlades(k) {
   return k.make([
-    k.pos(k.vec2(position.x, position.y)),
-    k.sprite('t-blade', { anim: 'spin' }),
+    k.pos(),
+    k.sprite('t-blade'),
     k.anchor('center'),
     k.area({
       shape: new k.Rect(k.vec2(0), 32, 32),
+      collisionIgnore: ['collider'],
     }),
-    position.type,
+    'trap',
+    'blade',
     {
       damage: 1,
       powerX: 200,
       powerY: 200,
+
+      setPosition(x, y) {
+        ((this.pos.x = x), (this.pos.y = y));
+      },
     },
   ]);
 }
@@ -131,6 +125,7 @@ export function makePc(k, initialPos, tag) {
       condition: false,
       callback: null,
       endCallback: null,
+      copletedEvent: false,
 
       setDialog(value) {
         this.dialog = value;
@@ -180,6 +175,80 @@ export function makePc(k, initialPos, tag) {
         this.callback?.(this);
       },
       endInteract() {
+        this.endCallback?.(this);
+      },
+      setCallback(callback, endCallback) {
+        this.callback = callback;
+        this.endCallback = endCallback;
+      },
+    },
+  ]);
+}
+export function makeDoor(k, initialPos, tag) {
+  return k.make([
+    k.pos(initialPos),
+    k.sprite('door'),
+    k.area({
+      shape: new k.Rect(k.vec2(0), 48, 32),
+      collisionIgnore: ['collider'],
+    }),
+    'interactable',
+    tag,
+    {
+      dialog: null,
+      condition: false,
+      callback: null,
+      endCallback: null,
+      copletedEvent: false,
+      setDialog(value) {
+        this.dialog = value;
+      },
+      setEvents() {
+        const box = this.add([
+          k.pos(24, -8),
+          k.anchor('center'),
+          k.scale(0.8),
+          k.sprite('interact-box'),
+          k.opacity(0),
+        ]);
+
+        const text = this.add([
+          k.pos(24, -8),
+          k.anchor('center'),
+          k.text('lift', { size: 6, font: 'pixel-font' }),
+          k.color(k.Color.fromHex('#000000')),
+          k.opacity(0),
+        ]);
+        this.onCollide('player', () => {
+          k.tween(
+            box.opacity,
+            1,
+            0.2,
+            (v) => (box.opacity = v),
+            k.easings.easeInCirc,
+          );
+          k.tween(
+            text.opacity,
+            1,
+            0.5,
+            (v) => (text.opacity = v),
+            k.easings.easeInCirc,
+          );
+
+          box.play('open');
+        });
+        this.onCollideEnd('player', () => {
+          box.play('close');
+          k.tween(1, 0, 0.5, (v) => (box.opacity = v), k.easings.easeInCirc);
+          k.tween(1, 0, 0.5, (v) => (text.opacity = v), k.easings.easeInCirc);
+        });
+      },
+      interact() {
+        this.play('open');
+        this.callback?.(this);
+      },
+      endInteract() {
+        this.play('close');
         this.endCallback?.(this);
       },
       setCallback(callback, endCallback) {
