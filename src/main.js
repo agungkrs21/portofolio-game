@@ -9,12 +9,12 @@ async function main() {
 
   tounchControl();
 
-  k.scene('intro', () => {
+  k.scene('intro', (prevSceneData) => {
     intro(k, introData);
   });
 
-  k.scene('room1', () => {
-    room1(k, room1data);
+  k.scene('room1', (prevSceneData) => {
+    room1(k, room1data, prevSceneData);
   });
 }
-main().then(() => k.go('room1'));
+main().then(() => k.go('room1', { respawnLocation: null }));

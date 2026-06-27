@@ -5,7 +5,7 @@ import { makeBlink } from './sharedEntitiesLogic.js';
 export function makePlayer(k) {
   return k.make([
     k.pos(),
-    k.sprite(state.current().playerSkin, { anim: 'idle' }),
+    k.sprite(state.current().playerSkin),
     k.area({
       shape: new k.Rect(k.vec2(0, 0), 8, 18),
     }),
@@ -127,6 +127,7 @@ export function makePlayer(k) {
               this.curAnim() !== 'walk' &&
               this.curAnim() !== 'jump' &&
               this.curAnim() !== 'land' &&
+              this.curAnim() !== 'death' &&
               this.isGrounded()
             ) {
               this.play('walk');
@@ -201,15 +202,11 @@ export function makePlayer(k) {
 
       setEvents() {
         this.onFall(() => {
-          this.play('fall');
+          if (this.curAnim() !== 'death') this.play('fall');
         });
 
         this.onGround(() => {
-          this.play('land');
-        });
-
-        this.onHeadbutt(() => {
-          this.play('fall');
+          if (this.curAnim() !== 'death') this.play('land');
         });
 
         this.onCollide('interactable', (obj) => {
@@ -250,17 +247,26 @@ export function makePlayer(k) {
         });
       },
 
-      canTakeDamge() {
+      canTakeDamge(healthBar, { respawnlocation }) {
         const damage = (amount) => {
           if (this.invincible) return;
           this.invincible = true;
 
-          if (this.hp() - amount < 0) {
-            // TODO;
-          }
-
           makeBlink(k, this);
+
+          if (this.hp() - amount <= 0) {
+            this.play('death');
+            state.set(
+              statePropsEnum.playerHp,
+              state.get(statePropsEnum.maxPlayerHp),
+            );
+
+            k.go('room1', { respawnlocation: respawnlocation });
+            return;
+          }
           this.hurt(amount);
+          state.set(statePropsEnum.playerHp, this.hp());
+          healthBar.triggerUpdate();
         };
         const knockBack = (tpos, powerX = 200, powerY = 100) => {
           const p = this.pos;

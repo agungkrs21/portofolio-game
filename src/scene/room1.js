@@ -13,8 +13,13 @@ import {
   pcDialog,
   scene1Intro,
 } from '../scene-dialog/scene1Dialog.js';
-import { room1State, state } from '../state/globalStateManager.js';
+import {
+  playerSkinEnums,
+  room1State,
+  state,
+} from '../state/globalStateManager.js';
 import { changePlayerSprite } from '../ui/changeSprite.js';
+import { makeHealthBar } from '../ui/healthBar.js';
 import { closeGui, renderToMenu } from '../ui/renderMenu.js';
 import {
   setBackgroundColor,
@@ -23,7 +28,7 @@ import {
   startTransision,
 } from './sceneUtils.js';
 
-export function room1(k, roomData) {
+export function room1(k, roomData, prevSceneData) {
   setBackgroundColor(k, '#000000');
 
   k.setGravity(900);
@@ -39,11 +44,13 @@ export function room1(k, roomData) {
   const cryogenic = makeCryogenic(k, room1State.get('cryrogenic'));
   const tblade = makeTBlades(k);
 
-  let playerPosition = null;
+  let firstSpawnLocation = null;
+  let { respawnLocation } = prevSceneData;
 
   const colliders = sceneLayers.colliders.objects;
   const positions = sceneLayers.positions.objects;
   const roomState = {
+    firstEnter: room1State.get('firstEnter'),
     key: room1State.get('key'),
     disket: room1State.get('disket'),
     cryogenic: room1State.get('cryrogenic'),
@@ -51,31 +58,33 @@ export function room1(k, roomData) {
     elevator: room1State.get('elevator'),
   };
 
+  const healthBarGui = makeHealthBar(k);
+  const { charFace, healthBar } = healthBarGui.initGui();
+
   async function roomEvent() {
     cryogenic.play('open');
     room1State.set('cryrogenic', 'open');
 
     await k.wait(0.3);
     map.add(player);
-    player.setPosition(playerPosition.x, playerPosition.y);
+    player.setPosition(respawnLocation.x, respawnLocation.y);
     player.setControls();
     player.setEvents();
     player.enablePassTrouhg();
     player.runUpdate();
     player.isInteracting = false;
-    player.canTakeDamge();
+    player.canTakeDamge(healthBar, respawnLocation);
     setCameraControls(k, map, player);
   }
 
   setMapColliders(k, map, colliders);
 
-  function setPlayerPosition(position) {}
-
   for (const position of positions) {
     if (position.name === 'player') {
-      playerPosition = position;
-      continue;
+      firstSpawnLocation = position;
+      // continue;
     }
+
     if (position.name === 'cryogenic') {
       map.add(cryogenic);
       cryogenic.setPosition(position.x, position.y);
@@ -163,18 +172,28 @@ export function room1(k, roomData) {
     }
   }
 
+  // determine where to spawn the player
+  if (!respawnLocation) {
+    respawnLocation = firstSpawnLocation;
+  }
+
   // room intro dialog
-  if (room1State.get('firstEnter')) {
+  if (roomState.firstEnter) {
     room1State.set('firstEnter', false);
     renderToMenu(scene1Intro.title, scene1Intro.content);
     scene1Intro.listen();
     scene1Intro.onConfirm();
+  } else {
+    roomEvent();
+    k.add(healthBarGui);
   }
 
   //Global Event
   function handleGlobalEvent(e) {
     if (e.type === EVENT.CHARACTER_SELECTED) {
       changePlayerSprite(k, player, e.detail.character);
+      charFace.setCharacter(playerSkinEnums[e.detail.character]);
+      k.add(healthBarGui);
       roomEvent();
     }
     if (e.type === EVENT.SITE_SELECTED) {

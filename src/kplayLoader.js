@@ -26,7 +26,7 @@ k.loadSprite('char-robot', '../asset/mainChar/Char_Robot.png', {
     walk: { from: 8, to: 15, speed: 24, loop: true },
     walkShoot: { from: 0, to: 7, loop: true },
     heal: { from: 19, to: 24, loop: true },
-    death: { from: 40, to: 45, loop: true },
+    death: { from: 40, to: 45 },
   },
 });
 
@@ -42,7 +42,7 @@ k.loadSprite('char-male', '../asset/mainChar/Char_Boy.png', {
     walk: { from: 8, to: 15, speed: 24, loop: true },
     walkShoot: { from: 0, to: 7, loop: true },
     heal: { from: 19, to: 24, loop: true },
-    death: { from: 40, to: 45, loop: true },
+    death: { from: 40, to: 45 },
   },
 });
 k.loadSprite('char-female', '../asset/mainChar/Char_Girl.png', {
@@ -57,7 +57,7 @@ k.loadSprite('char-female', '../asset/mainChar/Char_Girl.png', {
     walk: { from: 8, to: 15, speed: 24, loop: true },
     walkShoot: { from: 0, to: 7, loop: true },
     heal: { from: 19, to: 24, loop: true },
-    death: { from: 40, to: 45, loop: true },
+    death: { from: 40, to: 45 },
   },
 });
 
@@ -145,5 +145,35 @@ k.loadSprite('t-blade', '../asset/traps/Trap5.png', {
   anims: {
     spin: { from: 0, to: 3, loop: true },
     stop: { from: 0, to: 3 },
+  },
+});
+
+k.loadSpriteAtlas('../asset/gui/GUI_Elements.png', {
+  healthBar: {
+    x: 0,
+    y: 0,
+    width: 32,
+    height: 160,
+    sliceY: 10,
+  },
+  healthBarContainer: {
+    x: 32,
+    y: 0,
+    width: 64,
+    height: 32,
+  },
+  characterFace: {
+    x: 32,
+    y: 48,
+    width: 32,
+    height: 96,
+    sliceY: 3,
+  },
+  energyBar: {
+    x: 64,
+    y: 48,
+    width: 32,
+    height: 96,
+    sliceY: 6,
   },
 });
