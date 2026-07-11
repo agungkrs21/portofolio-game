@@ -1,11 +1,11 @@
-import { tounchControl } from './input/touch-controls.js';
-import { k } from './kplayLoader.js';
-import { intro } from './scene/intro.js';
-import { room1 } from './scene/room1.js';
+import { tounchControl } from '/black-white/src/input/touch-controls.js';
+import { k } from '/black-white/src/kplayLoader.js';
+import { intro } from '/black-white/src/scene/intro.js';
+import { room1 } from '/black-white/src/scene/room1.js';
 
 async function main() {
-  const introData = await (await fetch('../maps/intro.json')).json();
-  const room1data = await (await fetch('../maps/room1.json')).json();
+  const introData = await (await fetch('/black-white//maps/intro.json')).json();
+  const room1data = await (await fetch('/black-white/maps/room1.json')).json();
 
   tounchControl();
 

@@ -1,4 +1,4 @@
-import kaplay from '../lib/kaplay.mjs';
+import kaplay from '/black-white/lib/kaplay.mjs';
 
 const scale = 4;
 
@@ -12,9 +12,12 @@ export const k = kaplay({
   global: false,
 });
 
-k.loadFont('pixel-font', '../asset/font/PixelifySans-VariableFont_wght.ttf');
+k.loadFont(
+  'pixel-font',
+  '/black-white/asset/font/PixelifySans-VariableFont_wght.ttf',
+);
 
-k.loadSprite('char-robot', '../asset/mainChar/Char_Robot.png', {
+k.loadSprite('char-robot', '/black-white/asset/mainChar/Char_Robot.png', {
   sliceX: 8,
   sliceY: 6,
   anims: {
@@ -30,7 +33,7 @@ k.loadSprite('char-robot', '../asset/mainChar/Char_Robot.png', {
   },
 });
 
-k.loadSprite('char-male', '../asset/mainChar/Char_Boy.png', {
+k.loadSprite('char-male', '/black-white/asset/mainChar/Char_Boy.png', {
   sliceX: 8,
   sliceY: 6,
   anims: {
@@ -45,7 +48,7 @@ k.loadSprite('char-male', '../asset/mainChar/Char_Boy.png', {
     death: { from: 40, to: 45 },
   },
 });
-k.loadSprite('char-female', '../asset/mainChar/Char_Girl.png', {
+k.loadSprite('char-female', '/black-white/asset/mainChar/Char_Girl.png', {
   sliceX: 8,
   sliceY: 6,
   anims: {
@@ -61,13 +64,13 @@ k.loadSprite('char-female', '../asset/mainChar/Char_Girl.png', {
   },
 });
 
-k.loadSprite('intro', '../maps/intro.png');
-k.loadSprite('room1', '../maps/room1.png');
-k.loadSprite('border', '../asset/border/corner-edge.png', {
+k.loadSprite('intro', '/black-white/maps/intro.png');
+k.loadSprite('room1', '/black-white/maps/room1.png');
+k.loadSprite('border', '/black-white/asset/border/corner-edge.png', {
   sliceX: 2,
   sliceY: 1,
 });
-k.loadSprite('door', '../asset/objects/Door.png', {
+k.loadSprite('door', '/black-white/asset/objects/Door.png', {
   sliceX: 4,
   sliceY: 1,
   anims: {
@@ -75,7 +78,7 @@ k.loadSprite('door', '../asset/objects/Door.png', {
     open: { from: 0, to: 3 },
   },
 });
-k.loadSprite('boxes', '../asset/objects/Boxes.png', {
+k.loadSprite('boxes', '/black-white/asset/objects/Boxes.png', {
   sliceX: 4,
   sliceY: 4,
   anims: {
@@ -100,7 +103,7 @@ k.loadSprite('boxes', '../asset/objects/Boxes.png', {
   },
 });
 
-k.loadSprite('items', '../asset/objects/Items.png', {
+k.loadSprite('items', '/black-white/asset/objects/Items.png', {
   sliceX: 8,
   sliceY: 6,
   anims: {
@@ -115,14 +118,14 @@ k.loadSprite('items', '../asset/objects/Items.png', {
   },
 });
 
-k.loadSprite('checkPoint', '../asset/objects/checkpoint.png', {
+k.loadSprite('checkPoint', '/black-white/asset/objects/checkpoint.png', {
   sliceX: 9,
   sliceY: 1,
   anims: {
     active: { from: 0, to: 8 },
   },
 });
-k.loadSprite('cryogenic', '../asset/objects/cryogenic.png', {
+k.loadSprite('cryogenic', '/black-white/asset/objects/cryogenic.png', {
   sliceX: 4,
   sliceY: 2,
   anims: {
@@ -130,7 +133,7 @@ k.loadSprite('cryogenic', '../asset/objects/cryogenic.png', {
     open: { from: 4, to: 7 },
   },
 });
-k.loadSprite('interact-box', '../asset/border/interact-box.png', {
+k.loadSprite('interact-box', '/black-white/asset/border/interact-box.png', {
   sliceX: 6,
   sliceY: 1,
   anims: {
@@ -139,7 +142,7 @@ k.loadSprite('interact-box', '../asset/border/interact-box.png', {
   },
 });
 
-k.loadSprite('t-blade', '../asset/traps/Trap5.png', {
+k.loadSprite('t-blade', '/black-white/asset/traps/Trap5.png', {
   sliceX: 4,
   sliceY: 1,
   anims: {
@@ -148,7 +151,7 @@ k.loadSprite('t-blade', '../asset/traps/Trap5.png', {
   },
 });
 
-k.loadSpriteAtlas('../asset/gui/GUI_Elements.png', {
+k.loadSpriteAtlas('/black-white/asset/gui/GUI_Elements.png', {
   healthBar: {
     x: 0,
     y: 0,
