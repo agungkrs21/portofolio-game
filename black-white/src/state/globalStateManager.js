@@ -16,7 +16,7 @@ export const statePropsEnum = {
 
 function initStateManager() {
   const state = {
-    playerHp: 1,
+    playerHp: 10,
     playerSkin: playerSkinEnums.robot,
     maxPlayerHp: 10,
     isDoubleJumpUnclocked: false,
